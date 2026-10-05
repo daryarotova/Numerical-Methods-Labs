@@ -4,7 +4,8 @@ from lu_decomposition import lu_decompose
 from solve import solve_system, inverse_matrix, determinant
 from checks import check_lu, check_solution, check_inverse
 
-REPORT_PATH = "data/report.txt"
+
+REPORT_PATH = "data/report_lab_1_1.txt"
 
 
 def make_report(A, b, L, U, P, permutations, count, x, A_inv, det_A, 
