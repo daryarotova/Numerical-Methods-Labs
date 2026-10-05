@@ -42,11 +42,11 @@ def inverse_matrix(matrix_A):
     A_inv = np.zeros((n, n))
 
     for k in range(n):
-        e_k = E[:, k] # k-й столбец E — это вектор с 1 на позиции k
-        P_e_k = e_k[permutations] # перестановка
+        e_k = E[:, k]
+        P_e_k = e_k[permutations]
         z = solve_lower(L, P_e_k)
         x_k = solve_upper(U, z)
-        A_inv[:, k] = x_k # записываем в k-ый столбец рез-та
+        A_inv[:, k] = x_k
     
     return A_inv
 
