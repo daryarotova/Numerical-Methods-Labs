@@ -3,74 +3,47 @@ from utils import read_system_from_files
 from lu_decomposition import lu_decompose
 from solve import solve_system, inverse_matrix, determinant
 from checks import check_lu, check_solution, check_inverse
+from report_utils import add_section, add_matrix, add_value, add_list
 
 
+MATRIX_A_PATH = "data/matrix_A.txt"
+VECTOR_B_PATH = "data/vector_b.txt"
 REPORT_PATH = "data/report_lab_1_1.txt"
 
 
-def make_report(A, b, L, U, P, permutations, count, x, A_inv, det_A, 
+def make_report(A, b, L, U, P, permutations, count, x, A_inv, det_A,
                 res_LU, res_solution, res_inverse):
     lines = []
     lines.append("Лабораторная работа 1.1: LU-разложение")
     lines.append("")
-    lines.append(f"Размерность системы: n = {A.shape[0]}")
-    lines.append("")
+    add_value(lines, "Размерность системы", A.shape[0])
 
-    lines.append("--- Входные данные: ---")
-    lines.append("Матрица A =")
-    lines.append(str(A))
-    lines.append("")
+    add_section(lines, "Входные данные")
+    add_matrix(lines, "Матрица A", A)
+    add_matrix(lines, "Вектор b", b)
 
-    lines.append("Вектор b =")
-    lines.append(str(b))
-    lines.append("")
+    add_section(lines, "Выходные данные")
+    add_matrix(lines, "L", L)
+    add_matrix(lines, "U", U)
+    add_matrix(lines, "L @ U", L @ U)
+    add_value(lines, "Вектор перестановок", permutations)
+    add_value(lines, "Число перестановок", count)
+    add_matrix(lines, "Матрица P", P)
+    add_matrix(lines, "Решение системы Ax = b", x)
+    add_matrix(lines, "Обратная матрица A_inv", A_inv)
+    add_value(lines, "Определитель det(A)", det_A)
 
-    lines.append("--- Выходные данные: ---")
-    lines.append("L =")
-    lines.append(str(L))
-    lines.append("")
-
-    lines.append("U =")
-    lines.append(str(U))
-    lines.append("")
-
-    lines.append("L @ U =")
-    lines.append(str(L @ U))
-    lines.append("")
-
-    lines.append(f"Вектор перестановок: {permutations}")
-    lines.append(f"Число перестановок: {count}")
-    lines.append("")
-
-    lines.append("Матрица P =")
-    lines.append(str(P))
-    lines.append("")
-
-    lines.append("Решение системы Ax = b:")
-    lines.append(str(x))
-    lines.append("")
-
-    lines.append("Обратная матрица A_inv =")
-    lines.append(str(A_inv))
-    lines.append("")
-
-    lines.append(f"Определитель det(A) = {det_A}")
-    lines.append("")
-
-    lines.append("--- Проверки: ---")
-    lines.append("LU-разложение:")
-    for key, value in res_LU.items():
-        lines.append(f"    {key} -> {value}")
-    lines.append("")
-    lines.append(f"Невязка системы: {res_solution}")
-    lines.append("")
-    lines.append(f"Невязка обратной матрицы: {res_inverse}")
+    add_section(lines, "Проверки")
+    lu_items = [f"{key} -> {value}" for key, value in res_LU.items()]
+    add_list(lines, "LU-разложение", lu_items)
+    add_value(lines, "Невязка системы", res_solution)
+    add_value(lines, "Невязка обратной матрицы", res_inverse)
 
     return "\n".join(lines)
 
 
 def main():
-    A, b = read_system_from_files("data/matrix_A.txt", "data/vector_b.txt")
+    A, b = read_system_from_files(MATRIX_A_PATH, VECTOR_B_PATH)
     L, U, permutations, count = lu_decompose(A)
     P = np.eye(A.shape[0])[permutations, :]
 
@@ -82,9 +55,9 @@ def main():
     res_solution = check_solution(A, b, x)
     res_inverse = check_inverse(A, A_inv)
 
-    report = make_report(A, b, L, U, P, permutations, count, x, A_inv, det_A, 
+    report = make_report(A, b, L, U, P, permutations, count, x, A_inv, det_A,
                          res_LU, res_solution, res_inverse)
-    
+
     with open(REPORT_PATH, "w", encoding="utf-8") as file:
         file.write(report)
 
