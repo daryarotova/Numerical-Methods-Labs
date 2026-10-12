@@ -2,8 +2,10 @@ import numpy as np
 from checks import check_AV_VL, check_orthogonality
 from jacobi_rotation import jacobi_rotation_solve
 from utils import read_jacobi_system_from_files
+from report_utils import add_section, add_matrix, add_value, add_list
 
-
+MATRIX_A_PATH = "data/matrix_A.txt"
+EPSILON_PATH = "data/epsilon.txt"
 REPORT_PATH = "data/report_lab_1_4.txt"
 
 
@@ -11,42 +13,30 @@ def make_report(A, eps, eigenvalues, V, iteration, res_AV_VL, res_ortho_V, eps_t
     lines = []
     lines.append("Лабораторная работа 1.4: метод вращений Якоби")
     lines.append("")
-    lines.append(f"Размерность системы: n = {A.shape[0]}")
-    lines.append("")
+    add_value(lines, "Размерность системы", A.shape[0])
 
-    lines.append("--- Входные данные: ---")
-    lines.append("Матрица A =")
-    lines.append(str(A))
-    lines.append("")
+    add_section(lines, "Входные данные")
+    add_matrix(lines, "Матрица A", A)
+    add_value(lines, "Точность epsilon", eps)
 
-    lines.append(f"Точность epsilon = {eps}")
-    lines.append("")
+    add_section(lines, "Выходные данные")
+    add_value(lines, "Число итераций", iteration)
+    add_value(lines, "Собственные значения", eigenvalues)
+    add_matrix(lines, "Матрица собственных векторов V", V)
 
-    lines.append("--- Выходные данные: ---")
-    lines.append(f"Число итераций: {iteration}")
-    
-    lines.append("Собственные значения =")
-    lines.append(str(eigenvalues))
-    lines.append("")
+    add_section(lines, "Проверки")
+    add_value(lines, "Проверка A @ V = V @ Λ", res_AV_VL)
+    add_value(lines, "Проверка ортогональности матрицы собственных векторов V", res_ortho_V)
 
-    lines.append("Матрица собственных векторов V =")
-    lines.append(str(V))
-    lines.append("")
-
-    lines.append("--- Проверки: ---")
-    lines.append(f"Проверка A · V = V · Λ: {res_AV_VL}")
-    lines.append(f"Проверка ортогональности матрицы С.В. V: {res_ortho_V}")
-    lines.append("")
-
-    lines.append("--- Зависимость числа итераций от точности: ---")
-    for eps_i, iter_i in eps_table:
-        lines.append(f"epsilon = {eps_i} - iterations = {iter_i}")
+    add_section(lines, "Зависимость числа итераций от точности")
+    eps_items = [f"epsilon = {eps_i} -> iterations = {iter_i}" for eps_i, iter_i in eps_table]
+    add_list(lines, "Результаты", eps_items)
 
     return "\n".join(lines)
 
 
 def main():
-    A, eps = read_jacobi_system_from_files("data/matrix_A.txt", "data/epsilon.txt")
+    A, eps = read_jacobi_system_from_files(MATRIX_A_PATH, EPSILON_PATH)
     eigenvalues, V, iteration = jacobi_rotation_solve(A, eps)
 
     res_AV_VL = check_AV_VL(A, V, eigenvalues)
