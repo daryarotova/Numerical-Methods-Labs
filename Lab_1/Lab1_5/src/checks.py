@@ -23,7 +23,7 @@ def check_eigenvalues_product(matrix_A, eigenvalues):
 
 
 if __name__ == "__main__":
-    from qr_solve import qr_decomposition, qr_algorithm, find_eigenvalues
+    from qr_solve_real import qr_decomposition, qr_algorithm, find_eigenvalues
 
     A = np.array([[-2., 7., -6.],
                   [-1., 9., -4.],
